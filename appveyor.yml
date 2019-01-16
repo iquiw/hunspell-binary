@@ -1,0 +1,19 @@
+version: "{build}"
+
+clone_depth: 1
+
+environment:
+  HUNSPELL_VERSION: v1.7.0
+
+install:
+  - git clone --depth 1 -b %HUNSPELL_VERSION% https://github.com/hunspell/hunspell.git
+  - set PATH=C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin;C:\msys64\bin;C:\msys64\usr\bin;%PATH%;
+
+before_build:
+  - cd hunspell
+  - ps: $env:GITCOMMIT_FULL = git rev-parse HEAD
+
+build_script:
+  - bash C:/msys64/usr/bin/autoreconf -vfi
+  - bash configure --prefix=C:/Hunspell
+  - make
