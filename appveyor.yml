@@ -17,3 +17,11 @@ build_script:
   - bash C:/msys64/usr/bin/autoreconf -vfi
   - bash configure --prefix=C:/Hunspell
   - make
+
+after_build:
+  - make install
+  - 7z a %APPVEYOR_BUILD_FOLDER%\hunspell-%HUNSPELL_VERSION%.7z C:\Hunspell
+
+artifacts:
+  - path: hunspell-$(HUNSPELL_VERSION).7z
+    name: Hunspell binary archive
