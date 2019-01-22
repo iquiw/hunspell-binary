@@ -21,7 +21,28 @@ build_script:
 after_build:
   - make install
   - 7z a %APPVEYOR_BUILD_FOLDER%\hunspell-%HUNSPELL_VERSION%.7z C:\Hunspell
+  - ps: |
+      $env:ARTIFACT_HASH = (Get-FileHash -Algorithm SHA256 $env:APPVEYOR_BUILD_FOLDER\hunspell-$env:HUNSPELL_VERSION.7z).Hash
+      "$env:ARTIFACT_HASH  hunspell-$env:HUNSPELL_VERSION.7z" | Out-File -Encoding ascii -File $env:APPVEYOR_BUILD_FOLDER\sha256sum.txt
 
 artifacts:
   - path: hunspell-$(HUNSPELL_VERSION).7z
     name: Hunspell binary archive
+
+deploy:
+  - provider: GitHub
+    release: $(appveyor_repo_tag_name)
+    description: |
+      Hunspell binary for Windows 64-bit.
+
+      Built https://github.com/hunspell/hunspell at commit `$(GITCOMMIT_FULL)`.
+
+      | File                            | SHA-256 sum |
+      | ---                             | ---         |
+      | hunspell-$(HUNSPELL_VERSION).7z | `$(ARTIFACT_HASH)` |
+    auth_token:
+      secure: Jfjhx7TC03brqWcw+uUMXHJxj445SVeEcmSnDUV10ggRuU6UlzQMLSVGIBRqWD8v
+    artifact: hunspell-$(HUNSPELL_VERSION).7z,sha256sum.txt
+    on:
+      branch: master
+      appveyor_repo_tag: true
