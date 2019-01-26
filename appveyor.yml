@@ -28,6 +28,8 @@ after_build:
 artifacts:
   - path: hunspell-$(HUNSPELL_VERSION).7z
     name: Hunspell binary archive
+  - path: sha256sum.txt
+    name: SHA256 hash of Hunspell binary archive
 
 deploy:
   - provider: GitHub
