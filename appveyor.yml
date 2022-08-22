@@ -3,7 +3,7 @@ version: "{build}"
 clone_depth: 1
 
 environment:
-  HUNSPELL_VERSION: v1.7.0
+  HUNSPELL_VERSION: v1.7.1
 
 install:
   - git clone --depth 1 -b %HUNSPELL_VERSION% https://github.com/hunspell/hunspell.git
