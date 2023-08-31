@@ -49,5 +49,5 @@ deploy:
       secure: zrCvgZYRklwG2hyVIxJq4dtx0NDXFvYjUdW27htBD/j4Anp07P+3zSFnwXDR1QJ7
     artifact: hunspell-$(HUNSPELL_VERSION).7z,sha256sum.txt
     on:
-      branch: master
+      branch: main
       appveyor_repo_tag: true
