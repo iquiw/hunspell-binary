@@ -18,7 +18,7 @@ before_build:
 
 build_script:
   - bash C:/msys64/usr/bin/autoreconf -vfi
-  - bash configure --prefix=C:/Hunspell
+  - bash configure --prefix=C:/Hunspell --with-libiconv-prefix=/mingw64 --with-libintl-prefix=/mingw64
   - make
 
 after_build:
