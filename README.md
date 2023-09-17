@@ -1,8 +1,8 @@
 # Hunspell binary for Windows 64-bit
 
-[![Build status](https://ci.appveyor.com/api/projects/status/1163yjo33ci0mge7/branch/master?svg=true)](https://ci.appveyor.com/project/iquiw/hunspell-binary/branch/master)
+[![Build](https://github.com/iquiw/hunspell-binary/actions/workflows/build.yml/badge.svg)](https://github.com/iquiw/hunspell-binary/actions/workflows/build.yml)
 
-This repository sets up Appveyor CI for Hunspell build, which builds https://github.com/hunspell/hunspell
+This repository sets up GitHub Action for Hunspell build, which builds https://github.com/hunspell/hunspell
 
 See https://github.com/hunspell/hunspell#usage for usage.
 Sample dictionary download for Windows using Windows 10 built in curl command (rather than wget in linked usage page):
