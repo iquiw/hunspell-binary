@@ -1,0 +1,72 @@
+name: Build
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    env:
+      HUNSPELL_VERSION: v1.7.2
+      MSYSTEM: UCRT64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'hunspell/hunspell'
+          ref: '${{ env.HUNSPELL_VERSION }}'
+          path: hunspell
+
+      - name: Install dependencies
+        run: |
+          pacman -S --noconfirm --needed --noprogressbar autoconf automake libtool make mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gettext mingw-w64-ucrt-x86_64-libiconv
+        shell: 'C:/shells/msys2bash.cmd {0}'
+
+      - name: Build Hunspell
+        id: build
+        run: |
+          cd hunspell
+
+          GITCOMMIT_FULL=$('/c/Program Files/Git/bin/git' rev-parse HEAD)
+          echo "commit=$GITCOMMIT_FULL" >> $GITHUB_OUTPUT
+
+          autoreconf -vfi
+          ./configure --prefix=C:/Hunspell --with-libiconv-prefix=/ucrt64 --with-libintl-prefix=/ucrt64
+          make
+        shell: 'C:/shells/msys2bash.cmd {0}'
+
+      - name: Archive Hunspell
+        id: archive
+        run: |
+          cd hunspell
+
+          make install
+          cp /ucrt64/bin/libgcc_s_seh-1.dll /c/Hunspell/bin
+          cp /ucrt64/bin/libiconv-2.dll /c/Hunspell/bin
+          cp /ucrt64/bin/libintl-8.dll /c/Hunspell/bin
+          cp /ucrt64/bin/libstdc++-6.dll /c/Hunspell/bin
+          cp /ucrt64/bin/libwinpthread-1.dll /c/Hunspell/bin
+          "/c/Program Files/7-Zip/7z" a "hunspell-$HUNSPELL_VERSION.7z" /c/Hunspell
+
+          sha256sum "hunspell-$HUNSPELL_VERSION.7z" > sha256sum.txt
+          echo "hash=$(cut -d' ' -f1 < sha256sum.txt)" >> $GITHUB_OUTPUT
+        shell: 'C:/shells/msys2bash.cmd {0}'
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "hunspell/hunspell-${{ env.HUNSPELL_VERSION }}.7z,hunspell/sha256sum.txt"
+          artifactContentType: application/octet-stream
+          name: Hunspell ${{ env.HUNSPELL_VERSION }}
+          body: |
+            Hunspell binary for Windows.
+
+            Built https://github.com/hunspell/hunspell at commit `${{ steps.build.outputs.commit }}`.
+
+            | File | SHA-256 sum |
+            | ---  | ---         |
+            | hunspell-${{ env.HUNSPELL_VERSION }}.7z | `${{ steps.archive.outputs.hash }}` |
+          token: ${{ secrets.GITHUB_TOKEN }}
