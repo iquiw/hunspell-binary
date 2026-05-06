@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: windows-latest
     env:
-      HUNSPELL_VERSION: v1.7.2
+      HUNSPELL_VERSION: v1.7.3
       MSYSTEM: UCRT64
 
     steps:
