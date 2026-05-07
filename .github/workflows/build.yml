@@ -8,17 +8,21 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    permissions:
+      contents: write
+    timeout-minutes: 30
     env:
-      HUNSPELL_VERSION: v1.7.2
+      HUNSPELL_VERSION: v1.7.3
       MSYSTEM: UCRT64
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           repository: 'hunspell/hunspell'
           ref: '${{ env.HUNSPELL_VERSION }}'
           path: hunspell
+          persist-credentials: "false"
 
       - name: Install dependencies
         run: |
@@ -56,7 +60,7 @@ jobs:
         shell: 'C:/shells/msys2bash.cmd {0}'
 
       - name: Create Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
           artifacts: "hunspell/hunspell-${{ env.HUNSPELL_VERSION }}.7z,hunspell/sha256sum.txt"
           artifactContentType: application/octet-stream
